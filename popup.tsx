@@ -1,35 +1,28 @@
-import { useState } from "react"
+import { sendCSSDebugStateToContentScript } from "~libs/plasmoMessaging"
 
-import { sendToContentScript } from "@plasmohq/messaging"
-import { Storage } from "@plasmohq/storage"
-
-function IndexPopup() {
-  // DOMレイアウトのデッバック状態
-  const [enableCSSDebug, setEnableCSSDebug] = useState<boolean>(false)
-
-  const sendToCSSLayoutDebugContentScript = async () => {
-    // 更新用の状態
-    const newCSSDebugState = !enableCSSDebug
-    // Content Script経由でブラウザ側のDOMレイアウトの状態を更新する
-    await sendToContentScript({
-      name: "css-layout-debug",
-      body: { debug: newCSSDebugState }
-    })
-    // DOMレイアウトのデッバックの状態を更新する
-    setEnableCSSDebug(newCSSDebugState)
-  }
-
+const IndexPopup = () => {
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "column",
-        padding: 16
+        padding: 16,
+        width: "max-content"
       }}>
       <h2>CSS Layout Debug</h2>
-      <button onClick={sendToCSSLayoutDebugContentScript}>
-        {enableCSSDebug ? "終了" : "開始"}
-      </button>
+      <span
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          width: "100%"
+        }}>
+        <button onClick={() => sendCSSDebugStateToContentScript(true)}>
+          開始
+        </button>
+        <button onClick={() => sendCSSDebugStateToContentScript(false)}>
+          終了
+        </button>
+      </span>
     </div>
   )
 }
